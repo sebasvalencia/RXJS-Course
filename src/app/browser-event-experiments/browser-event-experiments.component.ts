@@ -14,7 +14,10 @@ export class BrowserEventExperimentsComponent implements OnInit {
 
     // We are receiveng a continuous stream of events, each event
     // contains some data
+    // hoverSection is like subject of a pattern
     this.hoverSection.addEventListener('mousemove', onMouseMove);
+
+    this.hoverSection.addEventListener('click', onClick);
 
   }
 
@@ -28,5 +31,10 @@ export class BrowserEventExperimentsComponent implements OnInit {
 // The advantage is that we can actually now unsubscribe from this sequence
 // of events from this stream of mouse events.
 function onMouseMove(ev: MouseEvent) {
-  console.log(ev);
+  console.log('onMouseMove', ev);
 }
+
+function onClick(ev: MouseEvent) {
+  console.log('onClick', ev);
+}
+
