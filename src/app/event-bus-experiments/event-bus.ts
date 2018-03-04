@@ -1,6 +1,9 @@
 
 import * as _ from 'lodash';
 
+export const LESSONS_LIST_AVAILABLE = 'NEW_LIST_AVAILABLE';
+export const ADD_NEW_LESSON = 'ADD_NEW_LESSON';
+
 // Define the observer type
 export interface Observer {
     notify(data: any);
@@ -8,26 +11,34 @@ export interface Observer {
 
 // Define the subject interface
 interface Subject {
-    registerObserver(obs: Observer);
-    unregisterObserver(obs: Observer);
-    notifyObservers(data: any);
+    registerObserver(eventType: string, obs: Observer);
+    unregisterObserver(eventType: string, obs: Observer);
+    notifyObservers(eventType: string, data: any);
 }
 
 // Define global event for the app
 class EventBus implements Subject {
 
     // observerCollection
-    private observers: Observer[] = [];
+    private observers: { [key: string]: Observer[] } = {};
 
-    registerObserver(obs: Observer) {
-        this.observers.push(obs);
+    registerObserver(eventType: string, obs: Observer) {
+        this.observersPerEventType(eventType).push(obs);
     }
 
-    unregisterObserver(obs: Observer) {
-        _.remove(this.observers, el => el === obs);
+    unregisterObserver(eventType: string, obs: Observer) {
+        _.remove(this.observersPerEventType(eventType), el => el === obs);
     }
-    notifyObservers(data: any) {
-        this.observers.forEach(obs => obs.notify(data));
+    notifyObservers(eventType: string, data: any) {
+        this.observersPerEventType(eventType).forEach(obs => obs.notify(data));
+    }
+
+    private observersPerEventType(eventType: string): Observer[] {
+        const observersPerType = this.observers[eventType];
+        if (!observersPerType) {
+            this.observers[eventType] = [];
+        }
+        return this.observers[eventType];
     }
 }
 
