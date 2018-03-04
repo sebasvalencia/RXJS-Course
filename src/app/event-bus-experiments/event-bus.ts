@@ -1,4 +1,5 @@
 
+import * as _ from 'lodash';
 
 // Define the observer type
 export interface Observer {
@@ -16,19 +17,20 @@ interface Subject {
 class EventBus implements Subject {
 
     // observerCollection
-    private observer: Observer[] = [];
+    private observers: Observer[] = [];
 
     registerObserver(obs: Observer) {
-        this.observer.push(obs);
+        this.observers.push(obs);
     }
 
     unregisterObserver(obs: Observer) {
-
+        _.remove(this.observers, el => el === obs);
     }
     notifyObservers(data: any) {
-
+        this.observers.forEach(obs => obs.notify(data));
     }
-
 }
 
+// Create global event bus. single instance of the class
+export const globalEventBus = new EventBus();
 
